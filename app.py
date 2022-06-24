@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import datetime as dt
-from xbbg import blp
+#from xbbg import blp
 import streamlit as st
 import statsmodels.api as sm
 import plotly.express as px
@@ -27,28 +27,28 @@ date = '2014-12-31'
 
 #%% BBG Data Pull
 
-date_range = pd.bdate_range(date, dt.date.today())
-returns_data_ = pd.DataFrame(index = date_range)
+#date_range = pd.bdate_range(date, dt.date.today())
+#returns_data_ = pd.DataFrame(index = date_range)
 
-@st.cache
-def grabData():
-    dfs = []
-    for t in tickers:
-        df = blp.bdh(t, ['PX_LAST'], start_date = date, end_date = dt.date.today())
-        df.columns = df.columns.droplevel(0)
-        df.rename(columns = {'PX_LAST' : t}, inplace = True)
-        df.index = pd.to_datetime(df.index)
-        dfs.append(df)
+#@st.cache
+#def grabData():
+    #dfs = []
+    #for t in tickers:
+        #df = blp.bdh(t, ['PX_LAST'], start_date = date, end_date = dt.date.today())
+        #df.columns = df.columns.droplevel(0)
+#         df.rename(columns = {'PX_LAST' : t}, inplace = True)
+#         df.index = pd.to_datetime(df.index)
+#         dfs.append(df)
 
-    returns_data_ = pd.concat(dfs, axis=1)
-    return returns_data_
+#     returns_data_ = pd.concat(dfs, axis=1)
+#     return returns_data_
 
-returns_data_ = grabData()
+# returns_data_ = grabData()
 
 #%%Copy results
 
-
-returns_data = returns_data_.copy().sort_index()
+returns_data = pd.read_csv('returns_data.csv', index_col = ['Date'], parse_dates = ['Date'])
+#returns_data = returns_data_.copy().sort_index()
 
 returns_data.index = pd.to_datetime(returns_data.index)
 
