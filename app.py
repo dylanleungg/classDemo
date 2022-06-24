@@ -3,7 +3,7 @@
 import pandas as pd
 import numpy as np
 import datetime as dt
-import xbbg
+from xbbg import blp
 import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
