@@ -1,5 +1,4 @@
 #%% Import Libraries
-
 import pandas as pd
 import numpy as np
 import datetime as dt
@@ -8,6 +7,7 @@ import streamlit as st
 import statsmodels.api as sm
 import plotly.express as px
 
+st.set_page_config(layout="wide") #Fit charts correctly on Streamlit
 
 #%% Declare Tickers 
 
@@ -261,27 +261,37 @@ finalDF = longDF.merge(lsDF, left_index = True, right_index = True).merge(eqwDF,
 
 # import plotly.io as pio
 # pio.renderers.default='browser' #to launch graphs in browser when running in Spyder
-share_prices.columns[0:10]
+
+st.title('Portfolio Optimization Backtest')
+
 ticker_select = st.multiselect('Select a ticker.', share_prices.columns[0:10])
 
 start = st.date_input('Pick Your Start Date', dt.date(2016, 1, 31))
 end = st.date_input('Pick Your End Date')
 
-fig_one = px.line(share_prices.loc[start:end][ticker_select], title = 'Share Price Performance Over Time')
+fig_one = px.line(share_prices.loc[start:end][ticker_select], title = 'Share Price Performance Over Time', width=1500, height=600)
 st.plotly_chart(fig_one)
 
-fig_two = px.line(finalDF.loc[start:end][['LONG CUM RETURN', 'LS CUM RETURN', 'EQW CUM RETURN', 'SPX CUM RETURN']], title = 'Portfolio Cumulative Returns')
+st.subheader('2Y Monthly Stock Betas')
+st.write(allBetasDF)
+
+st.header('Portfolio Analysis')
+
+fig_two = px.line(finalDF.loc[start:end][['LONG CUM RETURN', 'LS CUM RETURN', 'EQW CUM RETURN', 'SPX CUM RETURN']], title = 'Portfolio Cumulative Returns', width=1500, height=600)
 st.plotly_chart(fig_two)
 
-fig_thr = px.line(finalDF.loc[start:end][['LONG 3M SHARPE RATIO', 'LS 3M SHARPE RATIO', 'EQW 3M SHARPE RATIO']], title = '3 Month Rolling Sharpe Ratio')
+fig_thr = px.line(finalDF.loc[start:end][['LONG 3M SHARPE RATIO', 'LS 3M SHARPE RATIO', 'EQW 3M SHARPE RATIO']], title = '3 Month Rolling Sharpe Ratio', width=1500, height=600)
 st.plotly_chart(fig_thr)
 
 portfolio_select = st.selectbox('Select a Portfolio', ['LONG', 'LS', 'EQW'], index = 0)
 
-fig_four = px.line(finalDF.loc[start:end][portfolio_select + ' VOLATILITY'], title = 'Annualized Volatility')
+fig_four = px.line(finalDF.loc[start:end][portfolio_select + ' VOLATILITY'], title = 'Annualized Volatility', width=1500, height=600)
 st.plotly_chart(fig_four)
 
-st.write(allBetasDF)
+st.header('Calculated Optimal Weights')
 
-portfolio_select_two = st.selectbox('Select a Portfolio', {'LONG':long_optimal_weights, 'LS': ls_optimal_weights}, index = 0)
-st.write(portfolio_select_two)
+st.subheader('Long Only')
+st.write(long_optimal_weights)
+
+st.subheader('Long/Short')
+st.write(ls_optimal_weights)
